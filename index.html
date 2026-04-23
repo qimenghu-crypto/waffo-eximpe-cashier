@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EximPe Cashier — Waffo</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+.cw{display:flex;height:640px;border:0.5px solid #e5e7eb;border-radius:12px;overflow:hidden;max-width:860px;width:100%;background:#fff;box-shadow:0 4px 24px rgba(0,0,0,.08);}
+.lp{width:288px;flex-shrink:0;background:#16213e;color:#fff;padding:26px 20px;display:flex;flex-direction:column;gap:15px;}
+.logo{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#FF6B35,#F7931E);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:19px;color:#fff;}
+.m-name{font-size:14px;font-weight:600;margin-top:3px;}
+.m-sub{font-size:11px;color:rgba(255,255,255,0.4);margin-top:1px;}
+.o-card{background:rgba(255,255,255,0.07);border-radius:9px;padding:12px 14px;}
+.o-lbl{font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;}
+.o-desc{font-size:13px;color:rgba(255,255,255,0.8);}
+.amt-lbl{font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.07em;}
+.amt{font-size:30px;font-weight:700;letter-spacing:-1px;margin-top:3px;}
+.hdiv{height:1px;background:rgba(255,255,255,0.1);}
+.fee-row{display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,0.4);}
+.fee-row .v{color:rgba(255,255,255,0.7);}
+.fee-total{display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,0.7);font-weight:500;}
+.sec{display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(255,255,255,0.25);margin-top:auto;}
+.rp{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#f9fafb;min-width:0;}
+.test-bar{background:#fffbeb;border-bottom:1px solid #f6d860;padding:6px 24px;font-size:11px;color:#92660a;text-align:center;flex-shrink:0;}
+.rp-body{flex:1;overflow-y:auto;padding:18px 24px 0;}
+.rp-footer{flex-shrink:0;padding:12px 24px 16px;background:#f9fafb;border-top:1px solid #e5e7eb;display:flex;flex-direction:column;}
+.terms-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:10px;}
+.terms-row input[type=checkbox]{width:14px;height:14px;margin-top:2px;flex-shrink:0;cursor:pointer;}
+.terms-txt{font-size:11px;color:#6b7280;line-height:1.5;}
+.terms-txt a{color:#2563eb;text-decoration:none;}
+.pay-btn{display:block;width:100%;height:46px;border-radius:50px;border:none;background-color:#2563eb;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;}
+.pay-btn:hover{opacity:.92;}
+.pay-note{text-align:center;margin-top:8px;font-size:10px;color:#9ca3af;display:flex;align-items:center;justify-content:center;gap:3px;}
+.sc{display:none;flex-direction:column;}.sc.on{display:flex;}
+.htitle{font-size:14px;font-weight:600;color:#111;margin-bottom:14px;}
+.screen-back{display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+.back-btn{width:28px;height:28px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;cursor:pointer;font-size:14px;color:#555;display:flex;align-items:center;justify-content:center;}
+.back-btn:hover{background:#f3f4f6;}
+.screen-title{font-size:14px;font-weight:600;color:#111;}
+.pm-list{border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;background:#fff;margin-bottom:4px;}
+.pm-row{display:flex;align-items:center;gap:11px;padding:13px 14px;cursor:pointer;border-bottom:1px solid #f3f4f6;transition:background .1s;}
+.pm-row:last-of-type{border-bottom:none;}
+.pm-row:hover{background:#f5f7ff;}
+.pm-row.sel{background:#eff6ff;}
+.pm-ico{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ic-upi{background:#e8f5e9;}.ic-card{background:#dbeafe;}.ic-nb{background:#f3e8ff;}.ic-vba{background:#fff7ed;}
+.pm-nm{font-size:13px;font-weight:500;color:#111;flex:1;}
+.radio{width:16px;height:16px;border-radius:50%;border:2px solid #d1d5db;background:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.pm-row.sel .radio{border-color:#2563eb;background:#2563eb;}
+.rdot{width:5px;height:5px;border-radius:50%;background:#fff;display:none;}
+.pm-row.sel .rdot{display:block;}
+.pm-expand{display:none;padding:14px;border-top:1px solid #e0eaff;background:#f8faff;}
+.pm-row.sel + .pm-expand{display:block;}
+.info-block{background:#fff;border:1px solid #e5e7eb;border-radius:9px;padding:14px 14px 12px;}
+.block-div{height:1px;background:#f0f0f0;margin:12px 0;}
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:11px;}
+.fg:last-child{margin-bottom:0;}
+.fl{font-size:12px;font-weight:500;color:#374151;display:flex;align-items:center;gap:3px;}
+.req{color:#ef4444;}
+.fi{height:40px;border:1.5px solid #e5e7eb;border-radius:8px;padding:0 12px;font-size:13px;color:#111;background:#fff;width:100%;font-family:inherit;}
+.fi:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.07);}
+.fi::placeholder{color:#c4c8cf;}
+.save-row{display:flex;align-items:center;gap:7px;margin-top:10px;}
+.save-row input{width:14px;height:14px;cursor:pointer;accent-color:#2563eb;}
+.save-row label{font-size:12px;color:#374151;cursor:pointer;}
+.bank-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:10px;}
+.bb{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;border:1.5px solid #e5e7eb;border-radius:8px;cursor:pointer;background:#fff;transition:border-color .1s;}
+.bb:hover{border-color:#7c3aed;}
+.bb.sel{border-color:#7c3aed;border-width:2px;background:#faf5ff;}
+.ba{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;}
+.bn{font-size:10px;color:#6b7280;text-align:center;}
+.bank-search-wrap{position:relative;margin-bottom:8px;}
+.bank-search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);pointer-events:none;}
+.bank-search{height:40px;border:1.5px solid #e5e7eb;border-radius:50px;padding:0 12px 0 34px;font-size:13px;color:#111;background:#fff;width:100%;font-family:inherit;}
+.bank-search:focus{outline:none;border-color:#7c3aed;}
+.bank-search::placeholder{color:#c4c8cf;}
+.bank-list{max-height:160px;overflow-y:auto;border:1.5px solid #e5e7eb;border-radius:9px;background:#fff;display:none;}
+.bank-list-item{padding:10px 12px;font-size:13px;color:#111;cursor:pointer;border-bottom:1px solid #f3f4f6;}
+.bank-list-item:hover{background:#f5f7ff;}
+.bank-list-item.sel{background:#faf5ff;color:#7c3aed;font-weight:500;}
+.nb-notice{background:#faf5ff;border:1px solid #e9d5ff;border-radius:7px;padding:8px 11px;font-size:11px;color:#6d28d9;line-height:1.5;margin-top:8px;display:none;}
+.ls{display:none;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:12px;padding:40px 0;}
+.ls.on{display:flex;}
+.spin{width:36px;height:36px;border:3px solid #e5e7eb;border-top-color:#2563eb;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.stxt{font-size:13px;color:#6b7280;}
+.app-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.ag{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 4px;border:1.5px solid #e5e7eb;border-radius:9px;cursor:pointer;background:#fff;}
+.ag:hover{border-color:#16a34a;background:#f0fdf4;}
+.ag-ico{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+.ag-name{font-size:10px;color:#6b7280;font-weight:500;}
+.or-div{display:flex;align-items:center;gap:8px;margin:12px 0;font-size:11px;color:#c4c8cf;}
+.or-div::before,.or-div::after{content:'';flex:1;height:1px;background:#e5e7eb;}
+.uid-row{display:flex;gap:8px;}
+.uid-row .fi{flex:1;}
+.vfy{height:40px;padding:0 14px;border:1.5px solid #16a34a;border-radius:8px;background:#fff;color:#16a34a;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;font-family:inherit;}
+.qr-panel{display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px 16px;border:1.5px solid #e5e7eb;border-radius:10px;background:#fff;}
+.qr-timer{font-size:11px;color:#d97706;font-weight:500;}
+.qr-sub{font-size:11px;color:#9ca3af;}
+.acs-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:22px 20px;display:flex;flex-direction:column;gap:12px;align-items:stretch;}
+.acs-hd{font-size:14px;font-weight:600;color:#111;text-align:center;}
+.acs-badge{font-size:11px;color:#6b7280;background:#f3f4f6;padding:4px 10px;border-radius:5px;text-align:center;align-self:center;}
+.acs-msg{font-size:12px;color:#374151;text-align:center;line-height:1.5;}
+.otp-in{text-align:center;letter-spacing:.5em;font-size:20px;font-weight:600;}
+.acs-foot{font-size:11px;color:#9ca3af;text-align:center;}
+.acs-verify-btn{width:100%;height:44px;border-radius:50px;border:none;background-color:#2563eb;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+.acs-back{background:none;border:none;font-size:11px;color:#9ca3af;cursor:pointer;font-family:inherit;text-align:center;margin-top:2px;}
+.nb-redir{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:24px 20px;display:flex;flex-direction:column;align-items:center;gap:12px;}
+.nb-logo{width:50px;height:50px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+.nb-rd-t{font-size:14px;font-weight:600;color:#111;text-align:center;}
+.nb-rd-s{font-size:12px;color:#6b7280;text-align:center;line-height:1.5;}
+.prog-bar{width:100%;height:3px;background:#e5e7eb;border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;background:#7c3aed;border-radius:3px;width:0;}
+@keyframes prog{from{width:0}to{width:85%}}
+.nb-open-btn{width:100%;height:44px;border-radius:50px;border:none;background-color:#7c3aed;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+.vba-notice{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:11px;color:#92660a;line-height:1.6;margin-bottom:12px;}
+.vba-card{background:#fff;border:1.5px solid #e5e7eb;border-radius:10px;padding:14px;margin-bottom:10px;}
+.vba-t{font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;}
+.vba-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f9fafb;}
+.vba-row:last-child{border-bottom:none;}
+.vba-lbl{font-size:11px;color:#9ca3af;}
+.vba-val{font-size:12px;font-weight:500;color:#111;display:flex;align-items:center;gap:5px;}
+.copy{background:none;border:1px solid #e5e7eb;border-radius:4px;padding:2px 7px;font-size:10px;color:#6b7280;cursor:pointer;font-family:inherit;}
+.vba-info{background:#f9fafb;border-radius:7px;padding:9px 12px;font-size:11px;color:#6b7280;line-height:1.6;margin-bottom:4px;}
+.rs{display:none;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:12px;padding:40px 20px;}
+.rs.on{display:flex;}
+.ri{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;}
+.ri-ok{background:#dcfce7;}.ri-pend{background:#fef9c3;}
+.rt{font-size:17px;font-weight:600;color:#111;}
+.rsub{font-size:12px;color:#6b7280;text-align:center;max-width:250px;line-height:1.5;}
+.refn{font-size:10px;color:#9ca3af;background:#f3f4f6;padding:3px 12px;border-radius:20px;}
+.done-btn{background:#111;color:#fff;border:none;border-radius:8px;padding:9px 24px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="cw">
+  <div class="lp">
+    <div><div class="logo">W</div><div class="m-name">Waffo Store</div><div class="m-sub">Sygnal E-commerce Limited</div></div>
+    <div class="o-card"><div class="o-lbl">Order summary</div><div class="o-desc">Premium Subscription Plan</div></div>
+    <div><div class="amt-lbl">Amount due</div><div class="amt">₹1,050.00</div></div>
+    <div class="hdiv"></div>
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      <div class="fee-row"><span>Order amount</span><span class="v">₹1,050.00</span></div>
+      <div class="hdiv" style="margin:3px 0;"></div>
+      <div class="fee-total"><span>Total</span><span style="color:#fff;">₹1,050.00</span></div>
+    </div>
+    <div class="sec" style="margin-top:auto;"><svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L2 3.5v4C2 11 5 14 8 15c3-1 6-4 6-7.5v-4L8 1z"/></svg> Secured by EximPe · PA-CB Licensed</div>
+  </div>
+  <div class="rp">
+    <div class="test-bar">Test mode — no real payment will be processed</div>
+    <div class="rp-body" id="rp-body">
+      <div class="sc on" id="s-select">
+        <div class="htitle">Choose payment method</div>
+        <div class="pm-list">
+          <div class="pm-row" id="r-upi" onclick="selPM('upi')">
+            <div class="pm-ico ic-upi"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 3C7 3 3 7 3 12s4 9 9 9 9-4 9-9-4-9-9-9z" stroke="#16a34a" stroke-width="1.5"/><path d="M9 15l3-6 3 6M10.5 13h3" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            <div class="pm-nm">UPI</div><div class="radio"><div class="rdot"></div></div>
+          </div>
+          <div class="pm-expand" id="e-upi">
+            <div class="info-block">
+              <div class="fg"><label class="fl">Name <span class="req">*</span></label><input class="fi" placeholder="Priya Sharma" id="upi-name"/></div>
+              <div class="fg"><label class="fl">Email <span class="req">*</span></label><input type="email" class="fi" placeholder="priya@email.com" id="upi-email"/></div>
+              <div class="fg"><label class="fl">Phone <span class="req">*</span></label><input class="fi" placeholder="+91 98765 43210" id="upi-phone"/></div>
+              <div class="fg"><label class="fl">Postal code <span class="req">*</span></label><input class="fi" placeholder="400001" maxlength="6" id="upi-pin"/></div>
+            </div>
+          </div>
+          <div class="pm-row" id="r-card" onclick="selPM('card')">
+            <div class="pm-ico ic-card"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" stroke="#2563eb" stroke-width="1.5"/><path d="M2 9h20" stroke="#2563eb" stroke-width="1.5"/><rect x="5" y="13" width="5" height="2.5" rx=".5" fill="#2563eb"/></svg></div>
+            <div class="pm-nm">Credit / Debit Card</div><div class="radio"><div class="rdot"></div></div>
+          </div>
+          <div class="pm-expand" id="e-card">
+            <div class="info-block">
+              <div class="fg"><label class="fl">Card number <span class="req">*</span></label><input class="fi" placeholder="1234 5678 9012 3456" maxlength="19" oninput="fmtCard(this)" id="c-num"/></div>
+              <div class="fg"><label class="fl">Expiry (MM/YY) <span class="req">*</span></label><input class="fi" placeholder="MM / YY" maxlength="5" oninput="fmtExp(this)"/></div>
+              <div class="fg"><label class="fl">CVV <span class="req">*</span></label><input type="password" class="fi" placeholder="•••" maxlength="4"/></div>
+              <div class="fg"><label class="fl">Cardholder name <span class="req">*</span></label><input class="fi" placeholder="Name on card"/></div>
+              <div class="block-div"></div>
+              <div class="fg"><label class="fl">Email <span class="req">*</span></label><input type="email" class="fi" placeholder="priya@email.com" id="card-email"/></div>
+              <div class="fg"><label class="fl">Phone <span class="req">*</span></label><input class="fi" placeholder="+91 98765 43210" id="card-phone"/></div>
+              <div class="fg"><label class="fl">Postal code <span class="req">*</span></label><input class="fi" placeholder="400001" maxlength="6" id="card-pin"/></div>
+              <div class="save-row"><input type="checkbox" id="sv"/><label for="sv">Save card for future payments</label></div>
+            </div>
+          </div>
+          <div class="pm-row" id="r-nb" onclick="selPM('nb')">
+            <div class="pm-ico ic-nb"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M8 10v11M12 10v11M16 10v11M20 10v11" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            <div class="pm-nm">Net Banking</div><div class="radio"><div class="rdot"></div></div>
+          </div>
+          <div class="pm-expand" id="e-nb">
+            <div class="info-block">
+              <div class="fg"><label class="fl">Name <span class="req">*</span></label><input class="fi" placeholder="Priya Sharma" id="nb-name"/></div>
+              <div class="fg"><label class="fl">Email <span class="req">*</span></label><input type="email" class="fi" placeholder="priya@email.com" id="nb-email"/></div>
+              <div class="fg"><label class="fl">Phone <span class="req">*</span></label><input class="fi" placeholder="+91 98765 43210" id="nb-phone"/></div>
+              <div class="fg"><label class="fl">Postal code <span class="req">*</span></label><input class="fi" placeholder="400001" maxlength="6" id="nb-pin"/></div>
+              <div class="block-div"></div>
+              <div style="font-size:11px;font-weight:500;color:#374151;margin-bottom:8px;">Select bank <span class="req">*</span></div>
+              <div class="bank-grid">
+                <div class="bb" onclick="selBank(this,'HDFC Bank','#1a73e8','#e8f0fe','HDFC')"><div class="ba" style="background:#e8f0fe;color:#1a73e8;">HDFC</div><div class="bn">HDFC Bank</div></div>
+                <div class="bb" onclick="selBank(this,'ICICI Bank','#c62828','#fce4ec','ICICI')"><div class="ba" style="background:#fce4ec;color:#c62828;">ICICI</div><div class="bn">ICICI Bank</div></div>
+                <div class="bb" onclick="selBank(this,'State Bank of India','#2e7d32','#e8f5e9','SBI')"><div class="ba" style="background:#e8f5e9;color:#2e7d32;">SBI</div><div class="bn">State Bank</div></div>
+                <div class="bb" onclick="selBank(this,'Axis Bank','#e65100','#fff3e0','AXIS')"><div class="ba" style="background:#fff3e0;color:#e65100;">AXIS</div><div class="bn">Axis Bank</div></div>
+                <div class="bb" onclick="selBank(this,'Kotak Bank','#7b1fa2','#f3e5f5','KMB')"><div class="ba" style="background:#f3e5f5;color:#7b1fa2;">KMB</div><div class="bn">Kotak Bank</div></div>
+                <div class="bb" onclick="selBank(this,'Yes Bank','#00695c','#e0f2f1','YES')"><div class="ba" style="background:#e0f2f1;color:#00695c;">YES</div><div class="bn">Yes Bank</div></div>
+              </div>
+              <div class="bank-search-wrap">
+                <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><circle cx="8.5" cy="8.5" r="5.5" stroke="#9ca3af" stroke-width="1.5"/><path d="M13 13l3 3" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round"/></svg>
+                <input class="bank-search" id="bank-search" placeholder="Search for banks..." oninput="filterBanks(this.value)" onfocus="showBankList()"/>
+              </div>
+              <div class="bank-list" id="bank-list"></div>
+              <div class="nb-notice" id="nb-notice">You will be redirected to <strong id="nb-bank-nm"></strong> to complete payment.</div>
+            </div>
+          </div>
+          <div class="pm-row" id="r-vba" onclick="selPM('vba')">
+            <div class="pm-ico ic-vba"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2z" stroke="#c2410c" stroke-width="1.5"/><path d="M7 9h10M7 13h6M7 17h4" stroke="#c2410c" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            <div class="pm-nm">Bank Transfer (VBA)</div><div class="radio"><div class="rdot"></div></div>
+          </div>
+          <div class="pm-expand" id="e-vba">
+            <div class="info-block">
+              <div class="fg"><label class="fl">Name <span class="req">*</span></label><input class="fi" placeholder="Priya Sharma" id="vba-name"/></div>
+              <div class="fg"><label class="fl">Email <span class="req">*</span></label><input type="email" class="fi" placeholder="priya@email.com" id="vba-email"/></div>
+              <div class="fg"><label class="fl">Phone <span class="req">*</span></label><input class="fi" placeholder="+91 98765 43210" id="vba-phone"/></div>
+              <div class="fg"><label class="fl">Postal code <span class="req">*</span></label><input class="fi" placeholder="400001" maxlength="6" id="vba-pin"/></div>
+            </div>
+          </div>
+        </div>
+        <div style="height:12px;"></div>
+      </div>
+      <div class="ls" id="s-load"><div class="spin"></div><div class="stxt" id="load-msg">Creating order...</div></div>
+      <div class="sc" id="s-upi">
+        <div class="screen-back"><button class="back-btn" onclick="gotoSelect()">←</button><div class="screen-title">Pay with UPI</div></div>
+        <div id="upi-pc">
+          <div style="font-size:11px;color:#6b7280;margin-bottom:12px;">Scan the QR code with any UPI app on your phone</div>
+          <div class="qr-panel"><canvas id="qr-c" width="148" height="148"></canvas><div class="qr-sub">Open any UPI app → Scan → Enter PIN</div><div class="qr-timer" id="qr-t">Expires in 09:59</div></div>
+        </div>
+        <div id="upi-mobile" style="display:none;">
+          <div style="font-size:11px;color:#6b7280;margin-bottom:12px;">Tap your UPI app to complete payment</div>
+          <div class="app-grid">
+            <div class="ag" onclick="deeplink('Google Pay')"><div class="ag-ico" style="background:#e8f0fe;"><svg width="20" height="20" viewBox="0 0 24 24"><text x="12" y="16" text-anchor="middle" font-size="13" font-weight="700" fill="#4285F4" font-family="Arial">G</text></svg></div><div class="ag-name">Google Pay</div></div>
+            <div class="ag" onclick="deeplink('PhonePe')"><div class="ag-ico" style="background:#5f259f;color:#fff;font-size:10px;">Pe</div><div class="ag-name">PhonePe</div></div>
+            <div class="ag" onclick="deeplink('Paytm')"><div class="ag-ico" style="background:#00b9f5;color:#fff;font-size:10px;font-weight:700;">Pay</div><div class="ag-name">Paytm</div></div>
+            <div class="ag" onclick="deeplink('BHIM')"><div class="ag-ico" style="background:#f47920;color:#fff;font-size:9px;font-weight:700;">BHIM</div><div class="ag-name">BHIM</div></div>
+            <div class="ag" onclick="deeplink('Amazon Pay')"><div class="ag-ico" style="background:#ff9900;color:#000;font-size:9px;font-weight:700;">amz</div><div class="ag-name">Amazon Pay</div></div>
+            <div class="ag" onclick="deeplink('Other')"><div class="ag-ico" style="background:#f3f4f6;color:#6b7280;font-size:15px;">⋯</div><div class="ag-name">Other</div></div>
+          </div>
+          <div class="or-div">or enter UPI ID</div>
+          <div class="uid-row"><input class="fi" placeholder="yourname@upi" style="flex:1;"/><button class="vfy">Verify</button></div>
+        </div>
+        <div style="height:12px;"></div>
+      </div>
+      <div class="sc" id="s-acs">
+        <div class="screen-back"><button class="back-btn" onclick="gotoSelect()">←</button><div class="screen-title">Card verification</div></div>
+        <div class="acs-card">
+          <div class="acs-hd">3D Secure Authentication</div>
+          <div class="acs-badge">Verified by your Bank</div>
+          <div class="acs-msg">An OTP has been sent to your registered mobile number ending in ••••89.</div>
+          <div class="fg" style="margin-bottom:0;"><label class="fl" style="justify-content:center;margin-bottom:5px;">Enter OTP <span class="req">*</span></label><input class="fi otp-in" placeholder="• • • • • •" maxlength="6" id="otp-in"/></div>
+          <div class="acs-foot">Valid for <span id="otp-t" style="font-weight:600;color:#111;">5:00</span> &nbsp;·&nbsp; <a href="#" style="color:#2563eb;font-size:11px;" onclick="return false;">Resend OTP</a></div>
+          <button class="acs-verify-btn" onclick="submitOTP()">Verify & Pay</button>
+          <button class="acs-back" onclick="gotoSelect()">← Back to payment methods</button>
+        </div>
+        <div style="height:12px;"></div>
+      </div>
+      <div class="sc" id="s-nb">
+        <div class="screen-back"><button class="back-btn" onclick="gotoSelect()">←</button><div class="screen-title">Net Banking</div></div>
+        <div class="nb-redir">
+          <div class="nb-logo" id="nb-logo" style="background:#e8f0fe;color:#1a73e8;">HDFC</div>
+          <div class="nb-rd-t">Redirecting to <span id="nb-redir-nm">HDFC Bank</span></div>
+          <div class="nb-rd-s">You'll be taken to your bank's secure portal to authorise the payment. Do not close this window.</div>
+          <div class="prog-bar"><div class="prog-fill" id="nb-prog"></div></div>
+          <button class="nb-open-btn" onclick="doneNB()">Open bank portal</button>
+          <div style="font-size:10px;color:#9ca3af;">Order will update automatically after payment</div>
+        </div>
+        <div style="height:12px;"></div>
+      </div>
+      <div class="sc" id="s-vba">
+        <div class="screen-back"><button class="back-btn" onclick="gotoSelect()">←</button><div class="screen-title">Bank Transfer (VBA)</div></div>
+        <div class="vba-notice">Transfer exactly <strong>₹1,050.00</strong> to the account below via NEFT, RTGS, or IMPS. Your order confirms automatically once received.</div>
+        <div class="vba-card">
+          <div class="vba-t">Virtual Account Details</div>
+          <div class="vba-row"><div class="vba-lbl">Account number</div><div class="vba-val">2085001234567890<button class="copy" onclick="cp('2085001234567890',this)">Copy</button></div></div>
+          <div class="vba-row"><div class="vba-lbl">IFSC code</div><div class="vba-val">YESB0CMSNOC<button class="copy" onclick="cp('YESB0CMSNOC',this)">Copy</button></div></div>
+          <div class="vba-row"><div class="vba-lbl">Account name</div><div class="vba-val">Waffo / EximPe Payments</div></div>
+          <div class="vba-row"><div class="vba-lbl">Bank</div><div class="vba-val">Yes Bank</div></div>
+          <div class="vba-row"><div class="vba-lbl">Amount</div><div class="vba-val" style="color:#c2410c;font-weight:600;">₹1,050.00 (exact)</div></div>
+        </div>
+        <div style="font-size:10px;color:#9ca3af;margin-bottom:10px;">Max: <strong style="color:#374151;">₹25,00,000</strong> &nbsp;·&nbsp; NEFT · RTGS · IMPS</div>
+        <div class="vba-info">After transferring, you may be asked to provide buyer info and invoice for RBI compliance.</div>
+        <div style="height:12px;"></div>
+      </div>
+      <div class="rs" id="s-ok">
+        <div class="ri ri-ok">✓</div><div class="rt">Payment successful</div>
+        <div class="rsub" id="ok-msg">Your payment of ₹1,050.00 has been received.</div>
+        <div class="refn">Ref: EXP-2026042001839</div>
+        <button class="done-btn" onclick="gotoSelect()">Done</button>
+      </div>
+      <div class="rs" id="s-vba-p">
+        <div class="ri ri-pend" style="font-size:22px;">⏳</div><div class="rt">Transfer registered</div>
+        <div class="rsub">We'll confirm once the transfer arrives. You may be asked for buyer info for RBI compliance.</div>
+        <div class="refn">VBA: 2085001234567890</div>
+        <button class="done-btn" onclick="gotoSelect()">Done</button>
+      </div>
+    </div>
+    <div class="rp-footer" id="rp-footer" style="display:flex;">
+      <div class="terms-row" id="terms-row">
+        <input type="checkbox" id="agree"/>
+        <div class="terms-txt">By clicking Pay, you agree to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>.</div>
+      </div>
+      <button id="main-pay-btn" class="pay-btn" style="background-color:#2563eb;color:#fff;width:100%;height:46px;border-radius:50px;border:none;font-size:14px;font-weight:600;cursor:pointer;" onclick="handlePay()">Pay</button>
+      <div class="pay-note"><svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" style="opacity:.5"><path d="M8 1L2 3.5v4C2 11 5 14 8 15c3-1 6-4 6-7.5v-4L8 1z"/></svg> Secured payment page</div>
+    </div>
+  </div>
+</div>
+<script>
+const pmRows={upi:'r-upi',card:'r-card',nb:'r-nb',vba:'r-vba'};
+const pmExp={upi:'e-upi',card:'e-card',nb:'e-nb',vba:'e-vba'};
+let curPM=null,selBankName='',selBankColor='',selBankBg='',selBankAbbr='';
+const isMobile=()=>window.innerWidth<600||/Mobi|Android/i.test(navigator.userAgent);
+const ALL_BANKS=['Allahabad Bank','Andhra Bank','Axis Bank','Bandhan Bank','Bank of Baroda','Bank of India','Bank of Maharashtra','Canara Bank','Central Bank of India','City Union Bank','Deutsche Bank','Federal Bank','HDFC Bank','ICICI Bank','IDBI Bank','IDFC First Bank','Indian Bank','Indian Overseas Bank','IndusInd Bank','J&K Bank','Karnataka Bank','Karur Vysya Bank','Kotak Mahindra Bank','Punjab National Bank','Punjab & Sind Bank','RBL Bank','Saraswat Bank','South Indian Bank','Standard Chartered','State Bank of India','Tamilnad Mercantile Bank','UCO Bank','Union Bank of India','Yes Bank'];
+function renderBankList(q){const list=document.getElementById('bank-list');const f=q.trim()===''?ALL_BANKS:ALL_BANKS.filter(b=>b.toLowerCase().includes(q.toLowerCase()));list.innerHTML=f.map(b=>`<div class="bank-list-item${b===selBankName?' sel':''}" onclick="pickBankFromList('${b.replace(/'/g,"\\'")}')">${b}</div>`).join('');list.style.display=f.length?'block':'none';}
+function showBankList(){renderBankList(document.getElementById('bank-search').value);}
+function filterBanks(q){renderBankList(q);}
+function pickBankFromList(name){document.querySelectorAll('.bb').forEach(b=>b.classList.remove('sel'));selBankName=name;selBankColor='#374151';selBankBg='#f3f4f6';selBankAbbr=name.slice(0,4).toUpperCase();document.getElementById('bank-search').value=name;document.getElementById('bank-list').style.display='none';document.getElementById('nb-notice').style.display='block';document.getElementById('nb-bank-nm').textContent=name;}
+document.addEventListener('click',e=>{if(!e.target.closest('#e-nb')){const bl=document.getElementById('bank-list');if(bl)bl.style.display='none';}});
+function selPM(id){if(curPM===id){document.getElementById(pmRows[id]).classList.remove('sel');document.getElementById(pmExp[id]).style.display='none';curPM=null;return;}Object.keys(pmRows).forEach(k=>{document.getElementById(pmRows[k]).classList.remove('sel');document.getElementById(pmExp[k]).style.display='none';});document.getElementById(pmRows[id]).classList.add('sel');document.getElementById(pmExp[id]).style.display='block';curPM=id;setTimeout(()=>document.getElementById(pmExp[id]).scrollIntoView({behavior:'smooth',block:'nearest'}),60);}
+function showScreen(id){document.querySelectorAll('.sc,.ls,.rs').forEach(e=>e.classList.remove('on'));document.getElementById(id).classList.add('on');const hide=['s-acs','s-upi','s-ok','s-vba-p','s-load'].includes(id);document.getElementById('rp-footer').style.display=hide?'none':'flex';const btn=document.getElementById('main-pay-btn');const tr=document.getElementById('terms-row');if(id==='s-vba'){tr.style.display='none';btn.textContent="I've completed the transfer";btn.style.backgroundColor='#ea580c';}else{tr.style.display='flex';btn.textContent='Pay';btn.style.backgroundColor='#2563eb';}}
+function gotoSelect(){showScreen('s-select');const p=document.getElementById('nb-prog');if(p){p.style.animation='none';p.style.width='0';}}
+function load(msg,cb){document.getElementById('load-msg').textContent=msg;showScreen('s-load');setTimeout(cb,1500);}
+function handlePay(){if(!curPM){alert('Please select a payment method');return;}if(document.getElementById('s-vba').classList.contains('on')){showScreen('s-vba-p');return;}if(!document.getElementById('agree').checked){alert('Please agree to the Terms & Conditions');return;}if(curPM==='upi'){if(!v('upi-name')||!v('upi-email')||!v('upi-phone')||!v('upi-pin')){alert('Please fill in all required fields');return;}load('Creating order...',()=>{showScreen('s-upi');const mob=isMobile();document.getElementById('upi-pc').style.display=mob?'none':'block';document.getElementById('upi-mobile').style.display=mob?'block':'none';drawQR();runQR();});}else if(curPM==='card'){if(!v('card-email')||!v('card-phone')||!v('card-pin')){alert('Please fill in all required fields');return;}if(document.getElementById('c-num').value.replace(/\s/g,'').length<15){alert('Please enter a valid card number');return;}load('Creating order...',()=>{showScreen('s-acs');startOTP();});}else if(curPM==='nb'){if(!v('nb-name')||!v('nb-email')||!v('nb-phone')||!v('nb-pin')){alert('Please fill in all required fields');return;}if(!selBankName){alert('Please select a bank');return;}load('Creating order...',()=>{document.getElementById('nb-redir-nm').textContent=selBankName;const logo=document.getElementById('nb-logo');logo.textContent=selBankAbbr;logo.style.background=selBankBg;logo.style.color=selBankColor;showScreen('s-nb');const p=document.getElementById('nb-prog');p.style.animation='none';p.style.width='0';void p.offsetWidth;p.style.animation='prog 2s ease-in-out forwards';});}else if(curPM==='vba'){if(!v('vba-name')||!v('vba-email')||!v('vba-phone')||!v('vba-pin')){alert('Please fill in all required fields');return;}load('Creating order...',()=>showScreen('s-vba'));}}
+function doneNB(){load('Connecting to bank...',()=>{document.getElementById('ok-msg').textContent='Your net banking payment of ₹1,050.00 was successful.';showScreen('s-ok');});}
+function deeplink(app){load('Opening '+app+'...',()=>{document.getElementById('ok-msg').textContent='Your UPI payment of ₹1,050.00 was successful.';showScreen('s-ok');});}
+let _ot=300;
+function startOTP(){_ot=300;clearInterval(window._oi);window._oi=setInterval(()=>{_ot--;const el=document.getElementById('otp-t');if(el)el.textContent=Math.floor(_ot/60)+':'+((_ot%60)<10?'0':'')+(_ot%60);if(_ot<=0)clearInterval(window._oi);},1000);}
+function submitOTP(){if(document.getElementById('otp-in').value.length<4){alert('Please enter the OTP');return;}clearInterval(window._oi);load('Verifying payment...',()=>{document.getElementById('ok-msg').textContent='Your card payment of ₹1,050.00 was successful.';showScreen('s-ok');});}
+function selBank(el,name,color,bg,abbr){document.querySelectorAll('.bb').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');selBankName=name;selBankColor=color;selBankBg=bg;selBankAbbr=abbr;document.getElementById('bank-search').value='';document.getElementById('bank-list').style.display='none';document.getElementById('nb-notice').style.display='block';document.getElementById('nb-bank-nm').textContent=name;}
+function v(id){const el=document.getElementById(id);return el&&el.value.trim();}
+function fmtCard(el){let v=el.value.replace(/\D/g,'').slice(0,16);el.value=v.replace(/(.{4})/g,'$1 ').trim();}
+function fmtExp(el){let v=el.value.replace(/\D/g,'').slice(0,4);if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);el.value=v;}
+function cp(txt,btn){navigator.clipboard.writeText(txt).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',1500);});}
+let _qs=599,_qrOnce=false;
+function drawQR(){if(_qrOnce)return;_qrOnce=true;const c=document.getElementById('qr-c');if(!c)return;const ctx=c.getContext('2d'),s=148,cs=5;ctx.fillStyle='#fff';ctx.fillRect(0,0,s,s);const seed='upi://pay?pa=waffo@yesbank&am=1050';for(let i=0;i<s/cs;i++)for(let j=0;j<s/cs;j++){const h=(i*31+j*17+seed.charCodeAt((i+j)%seed.length))%3;if(h===0){ctx.fillStyle='#111';ctx.fillRect(j*cs+1,i*cs+1,cs-2,cs-2);}}[[0,0],[0,s-cs*7],[s-cs*7,0]].forEach(([x,y])=>{ctx.strokeStyle='#111';ctx.lineWidth=2;ctx.strokeRect(x+2,y+2,cs*7-4,cs*7-4);ctx.fillStyle='#111';ctx.fillRect(x+cs,y+cs,cs*5,cs*5);ctx.fillStyle='#fff';ctx.fillRect(x+cs*1.8,y+cs*1.8,cs*3.4,cs*3.4);ctx.fillStyle='#111';ctx.fillRect(x+cs*2.3,y+cs*2.3,cs*2.4,cs*2.4);});}
+function runQR(){const el=document.getElementById('qr-t');if(!el)return;const m=Math.floor(_qs/60),s=_qs%60;el.textContent='Expires in '+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');if(_qs>0){_qs--;setTimeout(runQR,1000);}}
+</script>
+</body>
+</html>
