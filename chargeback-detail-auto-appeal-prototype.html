@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chargeback Detail - Auto Appeal Material Prototype</title>
+  <style>
+    :root {
+      --primary: #1D3EEA;
+      --primary-hover: #1737D4;
+      --success: #00BDA1;
+      --success-bg: #E3FCF4;
+      --warning: #F7B500;
+      --warning-bg: #FFFCE6;
+      --warning-border: #FFE97A;
+      --error: #E83366;
+      --error-bg: #FFF5FB;
+      --error-border: #FACAE5;
+      --info: #2786DE;
+      --info-bg: #F0FAFF;
+      --info-border: #A8DEFF;
+      --bg-layout: #F5F5F5;
+      --bg-container: #FFFFFF;
+      --text: rgba(0,0,0,0.88);
+      --text-secondary: rgba(0,0,0,0.65);
+      --text-tertiary: rgba(0,0,0,0.45);
+      --text-placeholder: rgba(0,0,0,0.25);
+      --border: #d9d9d9;
+      --border-secondary: #f0f0f0;
+      --split: rgba(5,5,5,0.06);
+      --radius: 6px;
+      --radius-lg: 8px;
+      --shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg-layout);
+      color: var(--text);
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 240px;
+      background: #fff;
+      border-right: 1px solid var(--border-secondary);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-cell {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--border-secondary);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.2px;
+    }
+
+    .nav-group {
+      padding: 16px 8px 0;
+    }
+
+    .nav-title {
+      padding: 8px 16px;
+      color: var(--text-tertiary);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-item {
+      margin: 4px 8px;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      color: var(--text-secondary);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-item.active {
+      background: #F5FBFF;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      height: 64px;
+      background: #fff;
+      border-bottom: 1px solid var(--border-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .content {
+      padding: 24px;
+      background: var(--bg-layout);
+      min-height: calc(100vh - 64px);
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 0 24px;
+    }
+
+    .page-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .breadcrumb {
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    .page-title {
+      font-size: 24px;
+      line-height: 32px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .page-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .btn-group { display: flex; gap: 12px; }
+
+    .btn {
+      height: 40px;
+      border-radius: var(--radius);
+      padding: 0 16px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .btn.primary:hover { background: var(--primary-hover); }
+    .btn.small {
+      height: 32px;
+      font-size: 13px;
+      padding: 0 12px;
+    }
+    .btn.link {
+      height: auto;
+      border: none;
+      background: transparent;
+      color: var(--primary);
+      padding: 0;
+    }
+
+    .page-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .summary-card {
+      border: 1px solid var(--border-secondary);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      background: #fff;
+    }
+
+    .summary-label {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-bottom: 8px;
+    }
+
+    .summary-value {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 26px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 24px;
+      border-radius: 999px;
+      padding: 0 10px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid transparent;
+    }
+
+    .tag.success { background: var(--success-bg); color: var(--success); }
+    .tag.warning { background: var(--warning-bg); color: #B88100; border-color: var(--warning-border); }
+    .tag.error { background: var(--error-bg); color: var(--error); border-color: var(--error-border); }
+    .tag.info { background: var(--info-bg); color: var(--info); border-color: var(--info-border); }
+    .tag.default { background: #fafafa; color: var(--text-secondary); border-color: var(--border-secondary); }
+
+    .detail-layout {
+      display: grid;
+      grid-template-columns: 1.7fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .section-card {
+      border: 1px solid var(--border-secondary);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .section-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fff;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .section-body {
+      padding: 20px;
+    }
+
+    .kv-grid {
+      display: grid;
+      grid-template-columns: 180px 1fr 180px 1fr;
+      gap: 14px 16px;
+      align-items: center;
+    }
+
+    .kv-label {
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .kv-value {
+      font-size: 14px;
+      color: var(--text);
+      min-height: 22px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .notice {
+      border: 1px solid;
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .notice.warning {
+      background: var(--warning-bg);
+      border-color: var(--warning-border);
+    }
+
+    .notice.info {
+      background: var(--info-bg);
+      border-color: var(--info-border);
+    }
+
+    .notice.success {
+      background: var(--success-bg);
+      border-color: #6DE3C5;
+    }
+
+    .notice-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .notice-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 20px;
+    }
+
+    .missing-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .missing-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid var(--warning-border);
+      color: #8A6300;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .file-card {
+      margin-top: 20px;
+      border: 1px solid var(--border-secondary);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      background: #fafcff;
+    }
+
+    .file-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .file-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .file-sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .sub-block {
+      margin-top: 20px;
+      border-top: 1px dashed var(--border-secondary);
+      padding-top: 20px;
+    }
+
+    .sub-block-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin: 0 0 12px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    .field label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .required-star { color: var(--error); margin-right: 4px; }
+
+    .input {
+      height: 40px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0 12px;
+      font-size: 14px;
+      color: var(--text);
+      background: #fff;
+    }
+
+    .input::placeholder { color: var(--text-placeholder); }
+
+    .textarea {
+      min-height: 88px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 14px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .merchant-action-item,
+    .attachment-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border-secondary);
+      gap: 12px;
+    }
+
+    .merchant-action-item:last-child,
+    .attachment-row:last-child { border-bottom: none; }
+
+    .muted { color: var(--text-secondary); }
+    .tiny { font-size: 12px; color: var(--text-tertiary); }
+
+    .scenario-switch {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .scenario-pill {
+      height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #fff;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+
+    .scenario-pill.active {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: #F5FBFF;
+      font-weight: 600;
+    }
+
+    @media (max-width: 1280px) {
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .detail-layout { grid-template-columns: 1fr; }
+      .kv-grid { grid-template-columns: 160px 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="logo-cell">waffo</div>
+      <div class="nav-group">
+        <div class="nav-title">Transaction</div>
+        <div class="nav-item">Transactions</div>
+        <div class="nav-item">Payment Orders</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-title">Dispute</div>
+        <div class="nav-item">Disputes</div>
+        <div class="nav-item active">Chargebacks</div>
+        <div class="nav-item">Chargeback Alert</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-title">Merchant</div>
+        <div class="nav-item">Merchant Management</div>
+        <div class="nav-item">Integration</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="header">
+        <div class="breadcrumb">Dispute / Chargebacks / Chargeback Detail</div>
+        <div class="header-right">
+          <span>Risk Team</span>
+          <span>Qimeng Hu</span>
+        </div>
+      </header>
+
+      <div class="content">
+        <div class="page-header">
+          <div class="page-title-wrap">
+            <div class="breadcrumb">← Back to Chargebacks</div>
+            <h1 class="page-title">Chargeback Detail</h1>
+            <div class="page-subtitle">High-fidelity interaction prototype for refunded-case auto appeal material generation.</div>
+          </div>
+          <div class="btn-group">
+            <button class="btn">Download Case</button>
+            <button class="btn primary">Mark as Submitted Offline</button>
+          </div>
+        </div>
+
+        <div class="page-card">
+          <div class="scenario-switch">
+            <div class="scenario-pill active">1 自动建案 + 全额退款 + 信息充足</div>
+            <div class="scenario-pill">2 自动建案 + 信息不足</div>
+            <div class="scenario-pill">3 人工建案 + 信息充足</div>
+            <div class="scenario-pill">4 人工建案 + 信息不足</div>
+          </div>
+
+          <div class="summary-grid">
+            <div class="summary-card">
+              <div class="summary-label">Chargeback ID</div>
+              <div class="summary-value">CB20260518-000128</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-label">Case Source</div>
+              <div class="summary-value"><span class="tag info">Auto-created</span></div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-label">Refund Eligibility</div>
+              <div class="summary-value"><span class="tag success">Fully Refunded</span></div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-label">Appeal Material Status</div>
+              <div class="summary-value"><span class="tag success">Generated</span></div>
+            </div>
+          </div>
+
+          <div class="detail-layout">
+            <div>
+              <section class="section-card">
+                <div class="section-header">
+                  <h3 class="section-title">Chargeback Details</h3>
+                  <button class="btn small">Edit</button>
+                </div>
+                <div class="section-body">
+                  <div class="kv-grid">
+                    <div class="kv-label">Chargeback Amount</div>
+                    <div class="kv-value">USD 99.00</div>
+                    <div class="kv-label">Chargeback Reason</div>
+                    <div class="kv-value">Fraudulent Card Not Present</div>
+
+                    <div class="kv-label">Original Order ID</div>
+                    <div class="kv-value">P20260510-001733</div>
+                    <div class="kv-label">Payment ARN</div>
+                    <div class="kv-value">02691786069910000068439</div>
+
+                    <div class="kv-label">Refund Status</div>
+                    <div class="kv-value"><span class="tag success">Refunded</span></div>
+                    <div class="kv-label">Refund Amount</div>
+                    <div class="kv-value">USD 99.00</div>
+
+                    <div class="kv-label">Refund Execution Date</div>
+                    <div class="kv-value">2026/05/12</div>
+                    <div class="kv-label">Card Brand</div>
+                    <div class="kv-value">Visa</div>
+
+                    <div class="kv-label">Generation Mode</div>
+                    <div class="kv-value">Auto-generated after case creation</div>
+                    <div class="kv-label">Missing Fields</div>
+                    <div class="kv-value">-</div>
+                  </div>
+
+                  <div class="notice success">
+                    <div class="notice-title">Appeal material generated automatically</div>
+                    <div class="notice-text">The case is linked to a fully refunded order and all required fields are available. System generated the rebuttal material automatically and attached it to Chargeback Details.</div>
+                  </div>
+
+                  <div class="file-card">
+                    <div class="file-meta">
+                      <div class="file-name">02691786069910000068439.pdf</div>
+                      <div class="file-sub">Generated by System · 2026-05-18 10:02 UTC · Source: refunded order + chargeback case data</div>
+                    </div>
+                    <div class="btn-group">
+                      <button class="btn">Preview</button>
+                      <button class="btn primary">Download</button>
+                    </div>
+                  </div>
+
+                  <div class="sub-block">
+                    <h4 class="sub-block-title">Additional Information Required <span class="tiny">(shown only when required fields are missing)</span></h4>
+                    <div class="notice warning">
+                      <div class="notice-title">Conditional block example for scenario 2 / 4</div>
+                      <div class="notice-text">When the chargeback is eligible for auto-generation but required fields are incomplete, show this block below Chargeback Details for Risk Team to complete.</div>
+                      <div class="missing-list">
+                        <span class="missing-item">ARN Missing</span>
+                        <span class="missing-item">Refund Execution Date Missing</span>
+                        <span class="missing-item">Card Brand Missing</span>
+                      </div>
+                    </div>
+
+                    <div class="form-grid">
+                      <div class="field">
+                        <label><span class="required-star">*</span>ARN</label>
+                        <input class="input" placeholder="Enter ARN" value="02691786069910000068439" />
+                      </div>
+                      <div class="field">
+                        <label><span class="required-star">*</span>Refund Execution Date</label>
+                        <input class="input" placeholder="yyyy/mm/dd" value="2026/05/12" />
+                      </div>
+                      <div class="field">
+                        <label><span class="required-star">*</span>Card Brand</label>
+                        <input class="input" placeholder="Enter card brand" value="Visa" />
+                      </div>
+                      <div class="field">
+                        <label><span class="required-star">*</span>Refund Amount</label>
+                        <input class="input" placeholder="Enter refund amount" value="USD 99.00" />
+                      </div>
+                      <div class="field full">
+                        <label>Internal Note</label>
+                        <textarea class="textarea" placeholder="Optional note for material generation log"></textarea>
+                      </div>
+                    </div>
+                    <div class="form-actions">
+                      <button class="btn">Save</button>
+                      <button class="btn primary">Generate Appeal Material</button>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <div>
+              <section class="section-card" style="margin-bottom: 16px;">
+                <div class="section-header">
+                  <h3 class="section-title">Merchant Action</h3>
+                </div>
+                <div class="section-body">
+                  <div class="merchant-action-item">
+                    <div>
+                      <div style="font-weight:600;">Merchant Notification</div>
+                      <div class="tiny">This transaction has been refunded. Waffo will file an appeal on your behalf.</div>
+                    </div>
+                    <span class="tag default">No action required</span>
+                  </div>
+                  <div class="merchant-action-item">
+                    <div>
+                      <div style="font-weight:600;">Manual Material Collection</div>
+                      <div class="tiny">Only applicable for non-refunded / partially refunded chargebacks.</div>
+                    </div>
+                    <button class="btn small">View History</button>
+                  </div>
+                </div>
+              </section>
+
+              <section class="section-card">
+                <div class="section-header">
+                  <h3 class="section-title">Attachments</h3>
+                  <button class="btn small">Upload</button>
+                </div>
+                <div class="section-body">
+                  <div class="attachment-row">
+                    <div>
+                      <div style="font-weight:600;">02691786069910000068439.pdf</div>
+                      <div class="tiny">Auto-generated Appeal Material · Uploaded by System · 2026-05-18 10:02 UTC</div>
+                    </div>
+                    <button class="btn small">Download</button>
+                  </div>
+                  <div class="attachment-row">
+                    <div>
+                      <div style="font-weight:600;">channel_notice.pdf</div>
+                      <div class="tiny">Channel Notice · Uploaded by System · 2026-05-18 09:56 UTC</div>
+                    </div>
+                    <button class="btn small">Download</button>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
